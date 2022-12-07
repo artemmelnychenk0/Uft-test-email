@@ -3,24 +3,55 @@
     xmlns:o="urn:schemas-microsoft-com:office:office">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="x-apple-disable-message-reformatting">
+    <meta charset="utf-8"> <!-- utf-8 works for most cases -->
+    <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
+    <meta name="x-apple-disable-message-reformatting"> <!-- Disable auto-scale in iOS 10 Mail entirely -->
     <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
+    <!-- Tell iOS not to automatically link certain text strings. -->
     <meta name="color-scheme" content="light">
     <meta name="supported-color-schemes" content="light">
-    <title>UFT email</title>
+    <title></title> <!--   The title tag shows in email notifications, like Android 4.4. -->
+
+    <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
+    <!--[if gte mso 9]>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:AllowPNG/>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+        <![endif]-->
+
+    <!-- Web Font / @font-face : BEGIN -->
+    <!-- NOTE: If web fonts are not required, lines 23 - 41 can be safely removed. -->
+
+    <!-- Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font. -->
+    <!--[if mso]>
+            <style>
+                * {
+                    font-family: sans-serif !important;
+                }
+            </style>
+        <![endif]-->
+
+    <!-- All other clients get the webfont reference; some will render the font and others will silently fail to the fallbacks. More on that here: http://stylecampaign.com/blog/2015/02/webfont-support-in-email/ -->
+    <!--[if !mso]><!-->
+    <!-- insert web font reference, eg: <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'> -->
+    <!--<![endif]-->
+
+    <!-- Web Font / @font-face : END -->
+
+    <!-- CSS Reset : BEGIN -->
     <style>
-        * {
-            font-family: sans-serif !important;
-        }
-    </style>
-    <style>
+        /* What it does: Tells the email client that only light styles are provided but the client can transform them to dark. A duplicate of meta color-scheme meta tag above. */
         :root {
             color-scheme: light;
+            supported-color-schemes: light;
         }
 
+        /* What it does: Remove spaces around the email design added by some email clients. */
+        /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
         html,
         body {
             margin: 0 auto !important;
@@ -29,20 +60,31 @@
             width: 100% !important;
         }
 
+        /* What it does: Stops email clients resizing small text. */
         * {
             -ms-text-size-adjust: 100%;
             -webkit-text-size-adjust: 100%;
         }
 
+        /* What it does: Centers email on Android 4.4 */
         div[style*="margin: 16px 0"] {
             margin: 0 !important;
         }
 
+        /* What it does: forces Samsung Android mail clients to use the entire viewport */
         #MessageViewBody,
         #MessageWebViewDiv {
             width: 100% !important;
         }
 
+        /* What it does: Stops Outlook from adding extra spacing to tables. */
+        table,
+        td {
+            mso-table-lspace: 0pt !important;
+            mso-table-rspace: 0pt !important;
+        }
+
+        /* What it does: Fixes webkit padding issue. */
         table {
             border-spacing: 0 !important;
             border-collapse: collapse !important;
@@ -50,15 +92,19 @@
             margin: 0 auto !important;
         }
 
+        /* What it does: Uses a better rendering method when resizing images in IE. */
         img {
             -ms-interpolation-mode: bicubic;
         }
 
+        /* What it does: Prevents Windows 10 Mail from underlining links despite inline CSS. Styles for underlined links should be inline. */
         a {
             text-decoration: none;
         }
 
+        /* What it does: A work-around for email clients meddling in triggered links. */
         a[x-apple-data-detectors],
+        /* iOS */
         .unstyle-auto-detected-links a,
         .aBn {
             border-bottom: 0 !important;
@@ -71,39 +117,51 @@
             line-height: inherit !important;
         }
 
+        /* What it does: Prevents Gmail from displaying a download button on large, non-linked images. */
         .a6S {
             display: none !important;
             opacity: 0.01 !important;
         }
 
+        /* What it does: Prevents Gmail from changing the text color in conversation threads. */
         .im {
             color: inherit !important;
         }
 
+        /* If the above doesn't work, add a .g-img class to any image in question. */
         img.g-img+div {
             display: none !important;
         }
 
+        /* What it does: Removes right gutter in Gmail iOS app: https://github.com/TedGoas/Cerberus/issues/89  */
+        /* Create one of these media queries for each additional viewport size you'd like to fix */
+
+        /* iPhone 4, 4S, 5, 5S, 5C, and 5SE */
         @media only screen and (min-device-width: 320px) and (max-device-width: 374px) {
             u~div .email-container {
                 min-width: 320px !important;
             }
         }
 
+        /* iPhone 6, 6S, 7, 8, and X */
         @media only screen and (min-device-width: 375px) and (max-device-width: 413px) {
             u~div .email-container {
                 min-width: 375px !important;
             }
         }
 
+        /* iPhone 6+, 7+, and 8+ */
         @media only screen and (min-device-width: 414px) {
             u~div .email-container {
                 min-width: 414px !important;
             }
         }
     </style>
+    <!-- CSS Reset : END -->
 
+    <!-- Progressive Enhancements : BEGIN -->
     <style>
+        /* What it does: Hover styles for buttons */
         .button-td,
         .button-a {
             transition: all 100ms ease-in;
@@ -115,36 +173,51 @@
             border-color: #555555 !important;
         }
 
+        /* Media Queries */
         @media screen and (max-width: 600px) {
 
+            /* What it does: Adjust typography on small screens to improve readability */
             .email-container p {
                 font-size: 17px !important;
             }
 
         }
     </style>
+    <!-- Progressive Enhancements : END -->
+
 </head>
 
 <body width="100%" style="margin: 0; padding: 0 !important; background-color: #ffffff;">
     <center role="article" aria-roledescription="email" lang="en" style="width: 100%; background-color: #ffffff;">
+        <!--[if mso | IE]>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #222222;">
+    <tr>
+    <td>
+    <![endif]-->
 
         <div style="max-width: 600px; margin: 0 auto;" class="email-container">
-
+            <!--[if mso]>
+            <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600">
+            <tr>
+            <td>
+            <![endif]-->
             <!-- Email Body  -->
             <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
                 style="margin: auto;">
                 <!-- Email Header -->
                 <tr>
                     <td style="padding: 40px 20px 0px 0px; text-align:left">
-                        <a href="https://www.utoronto.ca"><img src="./imgs/5.png" width="250" height="70"
-                                alt="university of toronto icon"></a>
+                        <a href="https://www.utoronto.ca"><img
+                                src="https://user-images.githubusercontent.com/99288704/206302013-a7ce5167-f782-44d2-a4e7-a1947b32c13d.png"
+                                width="250" height="70" alt="university of toronto icon"></a>
                     </td>
                 </tr>
                 <!-- Email Header  -->
 
                 <tr>
                     <td style="background-color: #ffffff;">
-                        <img src="./imgs/1.png"" width=" 600" height="" alt="image on campus" border="0"
+                        <img src="https://user-images.githubusercontent.com/99288704/206301619-5674f90c-9f97-477e-8667-869b9508f195.png"" width="
+                            600" height="" alt="image on campus" border="0"
                             style="width: 100%; max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555; margin: auto; display: block;"
                             class="g-img">
                     </td>
@@ -206,8 +279,8 @@
                                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                         <tr>
                                             <td style="text-align: left; padding: 0 10px;">
-                                                <img src="imgs/2.png" width="200" height="" alt="physician student"
-                                                    border="0"
+                                                <img src="https://user-images.githubusercontent.com/99288704/206301957-5e52ffdf-fcf0-4d87-b588-e555f3ab7bd8.png"
+                                                    width="200" height="" alt="physician student" border="0"
                                                     style="width: 100%; max-width: 300px; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555;">
                                             </td>
                                         </tr>
@@ -273,8 +346,8 @@
                                             width="100%">
                                             <tr>
                                                 <td style="text-align: center; padding: 0 5px 0 0;">
-                                                    <img src="imgs/3.png" width="200" height="200"
-                                                        alt="picture of alumni" border="0"
+                                                    <img src="https://user-images.githubusercontent.com/99288704/206301974-5cd8eb62-3de9-42ef-84a3-8a37bf4e8a19.png"
+                                                        width="200" height="200" alt="picture of alumni" border="0"
                                                         style="width: 100%; max-width: 300px; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555;">
                                                 </td>
                                             </tr>
@@ -318,8 +391,8 @@
                                             width="100%">
                                             <tr>
                                                 <td style="text-align: center; padding: 0 5px 0 0;">
-                                                    <img src="imgs/4.png" width="200" height="200" alt="medicine design"
-                                                        border="0"
+                                                    <img src="https://user-images.githubusercontent.com/99288704/206301990-ff9c7531-8c08-42d8-8642-6fd23c00e912.png"
+                                                        width="200" height="200" alt="medicine design" border="0"
                                                         style="width: 100%; max-width: 300px; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555;">
                                                 </td>
                                             </tr>
@@ -384,14 +457,18 @@
                             </h1>
                             <br>
                             <br>
-                            <a href="https://www.facebook.com/universitytoronto/"><img src="./imgs/facebook.png"
+                            <a href="https://www.facebook.com/universitytoronto/"><img
+                                    src="https://user-images.githubusercontent.com/99288704/206302085-102d51e2-e644-4d1b-bc21-beace6368330.png"
                                     alt="facebook icon" width="50"></a>
-                            <a href="https://twitter.com/UofT"><img src="./imgs/twitter.png" alt="twitter icon"
-                                    width="50"></a>
-                            <a href="https://www.instagram.com/uoft/?hl=en"><img src="./imgs/instagram.png"
+                            <a href="https://twitter.com/UofT"><img
+                                    src="https://user-images.githubusercontent.com/99288704/206302131-57dae8a5-e13b-44e4-9667-9afac6f97e29.png"
+                                    alt="twitter icon" width="50"></a>
+                            <a href="https://www.instagram.com/uoft/?hl=en"><img
+                                    src="https://user-images.githubusercontent.com/99288704/206302105-ed230aa3-7fac-49b0-91fc-b3fd2d7d4a1c.png"
                                     alt="instagram icon" width="50" style="color:#dddddd"></a>
                             <a href="https://www.youtube.com/user/universitytoronto?app=desktop"><img
-                                    src="./imgs/youtube-3.png" alt="youtube icon" width="50"></a>
+                                    src="https://user-images.githubusercontent.com/99288704/206302178-487ca252-bf7b-403e-b18e-963368b0d797.png"
+                                    alt="youtube icon" width="50"></a>
                             <br>
                             <p style="margin: 10px; padding: 30px 10px;">THE UNIVERSITY OF TORONTO RESPECTS YOUR
                                 PRIVACY.
@@ -418,7 +495,19 @@
                     </tr>
                 </table>
                 <!-- Email Footer-->
+
+                <!--[if mso]>
+            </td>
+            </tr>
+            </table>
+            <![endif]-->
+
         </div>
+        <!--[if mso | IE]>
+    </td>
+    </tr>
+    </table>
+    <![endif]-->
     </center>
 </body>
 
